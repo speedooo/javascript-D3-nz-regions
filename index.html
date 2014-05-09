@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.state.NZ-AUK { fill: #29dd81; }
+.state.NZ-BOP { fill: #dd7a0c; }
+.state.NZ-CAN { fill: #dd23ce; }
+.state.NZ-GIS { fill: #693cdd; }
+.state.NZ-HKB { fill: #dd364f; }
+.state.NZ-MWT { fill: #96dd1d; }
+.state.NZ-MBH { fill: #31dd1a; }
+.state.NZ-NSN { fill: #20aedd; }
+.state.NZ-NTL { fill: #ddc4b5; }
+.state.NZ-OTA { fill: #dddd6c; }
+.state.NZ-STL { fill: #2914dd; }
+.state.NZ-TAS { fill: #ddc4b5; }
+.state.NZ-TKI { fill: #dd0bd9; }
+.state.NZ-WKO { fill: #1d89dd; }
+.state.NZ-WGN { fill: #dd30cf; }
+.state.NZ-WTC { fill: #91dd1f; }
+
+
+.state-label {
+  fill: #777;
+  fill-opacity: .7;
+  font-size: 10px;
+  font-weight: 300;
+  text-anchor: middle;
+}
+
+
+text {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10px;
+  pointer-events: none;
+}
+
+</style>
+<body>
+<script src="//d3js.org/d3.v3.min.js"></script>
+<script src="//d3js.org/topojson.v1.min.js"></script>
+<script>
+
+
+var width = 960,
+    height = 1160;
+
+
+var projection = d3.geo.mercator()
+  //.center([0,0])
+  .center([170,-40])
+  .scale(2000)
+  //.translate([width / 2, height / 2])
+  //.precision(.1);
+
+var path = d3.geo.path()
+    .projection(projection)
+    .pointRadius(2);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+d3.json("states_nzl.topojson", function(error, nz) {
+var subdata = topojson.feature(nz, nz.objects.states);
+
+  
+  svg.selectAll(".state")
+      .data(subdata.features)
+      .enter().append("path")
+      .attr("class", function(d) { return "state " + d.properties.code; })
+      .attr("d", path)
+      .on("mouseover", function(){
+                d3.select(this).append('title')
+                        .text(function(d) {return d.properties.name;})
+
+            })
+      .on("click", click);
+       
+/*
+  svg.selectAll(".state-label")
+    .data(subdata.features)
+    .enter().append("text")
+    .attr("class", function(d) { return "state-label " + d.id; })
+    .attr("transform", function(d) { return "translate(" + path.centroid(d) + ")"; })
+    .attr("dy", ".05em")
+    .text(function(d) { return d.properties.name; });  
+*/
+   
+    function click(a){
+        console.log(a.properties.name);} 
+ });
+</script>
+</body>
